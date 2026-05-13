@@ -1,0 +1,21 @@
+SELECT
+    DATE(date) AS work_date,
+    resource_id,
+
+    MIN(CASE WHEN is_clock_in = 1 THEN start_time END) AS clock_in_time,
+
+    MAX(CASE WHEN is_clock_out = 1 THEN end_time END) AS clock_out_time,
+
+    ROUND(
+        SUM(
+            (julianday(end_time) - julianday(start_time)) * 24
+        ),
+        2
+    ) AS total_hours
+
+FROM test_de
+
+WHERE end_time IS NOT NULL
+  AND end_time != '1/1/2000 0:00'
+
+GROUP BY DATE(date), resource_id;
